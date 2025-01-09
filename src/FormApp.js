@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
+// import AddDetails from './AddDetails'
 
 const FormApp = () => {
 
-    const [skills, setSkills] = useState([])
+  const [skills, setSkills] = useState([])
+  const [searchId,setSearchId] = useState('')
 
   const [ user, setUser]= useState({
+    id:'',
     name:'',
     age:'',
     email:'',
@@ -16,12 +19,8 @@ const FormApp = () => {
   const [users, setUsers] = useState([])
 
   const handleSkills=(e)=>{
-
-    
-
-    const {checked, value} = e.target
+    const {value} = e.target
         setSkills([...skills, value])
-
   }
 
   const handleChange=(e)=>{
@@ -33,18 +32,35 @@ const FormApp = () => {
 
   const handleSubmit=(e)=>{
     e.preventDefault()
-    // console.log(skills)
     // setUser({...user, skills: skills})
     user.skills = skills
     setUsers([...users, user])
     setSkills([]);
     console.log(user)
-    setUser({name:'', age:'', email:'', phone:'',gender:'' ,country:'',about:''}) 
+    setUser({id:'', name:'', age:'', email:'', phone:'',gender:'' ,country:'',about:''}) 
   }
-//   console.log(users)
+
+  const handleDelete = (id)=>{
+    const newList = users.filter(li => li.id !== id);
+    setUsers(newList);
+  }
+
   return (
     <div>
+        <h1>User Details</h1>
         <form onSubmit={handleSubmit}>
+            <input 
+                onChange={(e)=> setSearchId(e.target.value)}
+                placeholder='Search here'
+            /><br /><br/>
+            <label>Id : </label>
+            <input 
+                type='Number'
+                name='id'
+                value={user.id}
+                onChange={handleChange}
+            />
+            <br/><br/>
             <label>Name : </label>
             <input 
                 type='text' 
@@ -120,6 +136,7 @@ const FormApp = () => {
                 type='checkbox'
                 name = 'skills'
                 value = 'Java'
+                id='Java'
                 onChange={handleSkills}   
             />
             
@@ -129,6 +146,7 @@ const FormApp = () => {
                 type='checkbox'
                 name= 'skills'
                 value = 'ReactJs'
+                id='ReactJs'
                 onChange={handleSkills}
             />
 
@@ -138,6 +156,7 @@ const FormApp = () => {
                 type='checkbox'
                 name= 'skills'
                 value = 'Nodejs'
+                id='Nodejs'
                 onChange={handleSkills}
             />
 
@@ -147,6 +166,7 @@ const FormApp = () => {
                 type='checkbox'
                 name= 'skills'
                 value = 'javascript'
+                id='javascript'
                 onChange={handleSkills}
             />
 
@@ -186,7 +206,8 @@ const FormApp = () => {
         </form><br/>
         <table border={1}>
             <thead>
-                <tr>           
+                <tr> 
+                    <th>Id</th>          
                     <th>Name</th>
                     <th>Age</th>
                     <th>Email</th>
@@ -195,12 +216,22 @@ const FormApp = () => {
                     <th>Skills</th>
                     <th>Country</th>
                     <th>About</th>
+                    <th>Action</th>
                 </tr> 
             </thead>
             <tbody>
             {
-                users.map((user, index)=>(
+                users.filter((item)=>{
+                    return searchId.toLowerCase() === '' ? item : item.name.toLowerCase().includes(searchId)
+                }).map((user, index)=>(
+
+                    // user.name === edit
+                    // ?
+                    // <><AddDetails /></>
+                    // :
+
                     <tr key={index}>
+                        <td>{user.id}</td>
                         <td>{user.name}</td>
                         <td>{user.age}</td>
                         <td>{user.email}</td>
@@ -211,12 +242,15 @@ const FormApp = () => {
                         })}</ul></td>
                         <td>{user.country}</td>
                         <td>{user.about}</td>
+                        <td>
+                            <button >Edit</button>
+                            <button onClick={()=>handleDelete(user.id)}>Delete</button>
+                        </td>
                  </tr>
                 ))
             }
             </tbody>
         </table>
-
     </div>
 
     
